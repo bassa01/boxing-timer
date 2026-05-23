@@ -1,0 +1,17 @@
+{
+  "name": "Kickboxing Training",
+  "short_name": "Kickboxing",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#101110",
+  "theme_color": "#151515",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

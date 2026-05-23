@@ -1,0 +1,42 @@
+import { getHistory, getMenus, saveHistory, saveMenus } from "./storage.js";
+import { localDate, uid } from "./menu.js";
+
+export function addTrainingHistory(menu, startedAt, status, memo = "") {
+  const endedAt = new Date().toISOString();
+  const item = {
+    id: uid("history"),
+    performedDate: localDate(new Date(endedAt)),
+    startedAt,
+    endedAt,
+    menuId: menu.id,
+    menuName: menu.name,
+    roundCount: menu.rounds.length,
+    snapshot: structuredClone(menu),
+    memo,
+    status
+  };
+  const history = getHistory();
+  history.unshift(item);
+  saveHistory(history);
+
+  const menus = getMenus();
+  const index = menus.findIndex((entry) => entry.id === menu.id);
+  if (index >= 0) {
+    menus[index] = {
+      ...menus[index],
+      lastPerformedAt: endedAt,
+      performedCount: Number(menus[index].performedCount || 0) + (status === "完了" ? 1 : 0),
+      updatedAt: new Date().toISOString()
+    };
+    saveMenus(menus);
+  }
+  return item;
+}
+
+export function groupHistoryByDate(history) {
+  return history.reduce((groups, item) => {
+    groups[item.performedDate] ||= [];
+    groups[item.performedDate].push(item);
+    return groups;
+  }, {});
+}
