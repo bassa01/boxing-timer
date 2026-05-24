@@ -40,6 +40,7 @@ export class TrainingTimer {
     this.running = false;
     this.interval = null;
     this.warned = false;
+    this.announcedIndex = null;
   }
 
   current() {
@@ -53,7 +54,10 @@ export class TrainingTimer {
   start() {
     if (this.running || !this.current()) return;
     this.running = true;
-    this.onSession?.(this.current(), this.next());
+    if (this.announcedIndex !== this.index) {
+      this.announcedIndex = this.index;
+      this.onSession?.(this.current(), this.next());
+    }
     this.tickView();
     this.interval = window.setInterval(() => this.step(), 1000);
   }
@@ -100,6 +104,7 @@ export class TrainingTimer {
       return;
     }
     this.remaining = this.sessions[this.index].seconds;
+    this.announcedIndex = this.index;
     this.onSession?.(this.current(), this.next());
     this.tickView();
   }

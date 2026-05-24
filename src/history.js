@@ -1,7 +1,7 @@
 import { getHistory, getMenus, saveHistory, saveMenus } from "./storage.js";
 import { localDate, uid } from "./menu.js";
 
-export function addTrainingHistory(menu, startedAt, status, memo = "") {
+export function addTrainingHistory(menu, startedAt, status, memo = "", sessions = []) {
   const endedAt = new Date().toISOString();
   const item = {
     id: uid("history"),
@@ -12,6 +12,7 @@ export function addTrainingHistory(menu, startedAt, status, memo = "") {
     menuName: menu.name,
     roundCount: menu.rounds.length,
     snapshot: structuredClone(menu),
+    sessions: structuredClone(sessions),
     memo,
     status
   };

@@ -1,4 +1,4 @@
-const CACHE_NAME = "kb-training-v9";
+const CACHE_NAME = "kb-training-v10";
 const ASSETS = [
   "./",
   "index.html",

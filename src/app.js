@@ -23,6 +23,7 @@ const state = {
   editingMenu: null,
   runningMenu: null,
   selectedHistory: null,
+  sessionLog: [],
   timer: null,
   startedAt: null
 };
@@ -114,16 +115,19 @@ function renderRun() {
   app.replaceChildren(cloneTemplate("runView"));
   const sessions = buildSessions(menu);
   state.startedAt = new Date().toISOString();
+  state.sessionLog = [];
   state.timer = new TrainingTimer({
     sessions,
     onSession: (session) => {
+      startSessionRecord(session);
       playCue(session.type);
       speak(`${session.label} ${describeSession(session)}`);
     },
     onTick: updateRunView,
     onComplete: () => {
+      finishCurrentSessionRecord();
       playCue("end");
-      addTrainingHistory(menu, state.startedAt, "完了");
+      addTrainingHistory(menu, state.startedAt, "完了", "", state.sessionLog);
       alert("練習を完了しました");
       render("history");
     }
@@ -135,9 +139,10 @@ function renderRun() {
   app.querySelector("[data-action='skip-run']").addEventListener("click", () => state.timer.skip());
   app.querySelector("[data-action='end-run']").addEventListener("click", () => {
     if (!confirm("練習を終了しますか？")) return;
+    finishCurrentSessionRecord();
     state.timer.stop();
     const memo = prompt("練習メモを残しますか？", "") || "";
-    addTrainingHistory(menu, state.startedAt, "途中終了", memo);
+    addTrainingHistory(menu, state.startedAt, "途中終了", memo, state.sessionLog);
     render("history");
   });
   updateRunView(state.timer.current(), state.timer.next(), state.timer.remaining, "view");
@@ -247,7 +252,6 @@ function renderHistoryDetail() {
     render("history");
     return;
   }
-  const menu = item.snapshot || {};
   const root = document.createElement("section");
   root.className = "view-stack";
 
@@ -277,12 +281,52 @@ function renderHistoryDetail() {
   }
 
   root.append(toolbar, header);
-  (menu.rounds || []).forEach((round, index) => {
-    root.append(detailBlock(`Round ${index + 1}`, round.items || [], round.memo || ""));
-    const rest = menu.rests?.[index];
-    if (rest) root.append(detailBlock(`Rest ${index + 1}`, rest.items || [], ""));
-  });
+  const performedSessions = item.sessions || [];
+  if (performedSessions.length) {
+    performedSessions.forEach((session) => root.append(historySessionBlock(session)));
+  } else if (item.status === "完了") {
+    const menu = item.snapshot || {};
+    (menu.rounds || []).forEach((round, index) => {
+      root.append(detailBlock(`Round ${index + 1}`, round.items || [], round.memo || ""));
+      const rest = menu.rests?.[index];
+      if (rest) root.append(detailBlock(`Rest ${index + 1}`, rest.items || [], ""));
+    });
+  } else {
+    root.append(emptyCard("この履歴には実施した区間の記録がありません"));
+  }
   app.replaceChildren(root);
+}
+
+function startSessionRecord(session) {
+  finishCurrentSessionRecord();
+  state.sessionLog.push({
+    type: session.type,
+    label: session.label,
+    items: structuredClone(session.items || []),
+    memo: session.memo || "",
+    plannedSeconds: session.seconds,
+    startedAt: new Date().toISOString(),
+    endedAt: null,
+    durationSeconds: 0
+  });
+}
+
+function finishCurrentSessionRecord() {
+  const current = state.sessionLog.at(-1);
+  if (!current || current.endedAt) return;
+  const endedAt = new Date();
+  current.endedAt = endedAt.toISOString();
+  current.durationSeconds = Math.max(0, Math.round((endedAt.getTime() - new Date(current.startedAt).getTime()) / 1000));
+}
+
+function historySessionBlock(session) {
+  const card = detailBlock(session.label, session.items || [], session.memo || "");
+  const meta = document.createElement("p");
+  meta.className = "item-meta";
+  const endText = session.endedAt ? timeOnly(session.endedAt) : "実施中";
+  meta.textContent = `${timeOnly(session.startedAt)}-${endText} / ${formatTime(session.durationSeconds || 0)}`;
+  card.prepend(meta);
+  return card;
 }
 
 function detailBlock(title, items, memo) {
