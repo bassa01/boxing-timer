@@ -202,7 +202,7 @@ function menuCard(menu) {
   actions.className = "card-actions";
   actions.append(actionButton("開始", "primary-button small", () => startMenu(menu)));
   actions.append(actionButton("編集", "secondary-button small", () => editMenu(menu)));
-  actions.append(actionButton("今日にする", "secondary-button small", () => {
+  actions.append(actionButton("今日のメニューにする", "secondary-button small", () => {
     setTodayMenuId(menu.id);
     render("home");
   }));
