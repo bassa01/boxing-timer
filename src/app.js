@@ -45,6 +45,7 @@ function cloneTemplate(id) {
 function render(view) {
   state.view = view;
   document.body.classList.toggle("is-running-view", view === "run");
+  document.body.classList.toggle("is-share-view", view === "share-card");
   tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.view === view));
   if (state.timer && view !== "run") {
     state.timer.stop();
@@ -56,6 +57,7 @@ function render(view) {
   if (view === "run") renderRun();
   if (view === "history") renderHistory();
   if (view === "history-detail") renderHistoryDetail();
+  if (view === "share-card") renderShareCard();
   if (view === "settings") renderSettings();
 }
 
@@ -241,6 +243,10 @@ function historyCard(item) {
     state.selectedHistory = item;
     render("history-detail");
   }));
+  actions.append(actionButton("スクショ用に表示", "secondary-button small full-width", () => {
+    state.selectedHistory = item;
+    render("share-card");
+  }));
   actions.append(actionButton("この履歴を削除", "danger-button small danger-inline", () => {
     const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
     if (!ok) return;
@@ -263,6 +269,7 @@ function renderHistoryDetail() {
   const toolbar = document.createElement("div");
   toolbar.className = "toolbar";
   toolbar.append(actionButton("戻る", "ghost-button small", () => render("history")));
+  toolbar.append(actionButton("スクショ用", "secondary-button small", () => render("share-card")));
   toolbar.append(actionButton("この履歴を削除", "danger-button small", () => {
     const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
     if (!ok) return;
@@ -302,6 +309,71 @@ function renderHistoryDetail() {
   app.replaceChildren(root);
 }
 
+function renderShareCard() {
+  const item = state.selectedHistory;
+  if (!item) {
+    render("history");
+    return;
+  }
+  const sessions = shareSessions(item);
+  const totalSeconds = sessions.reduce((sum, session) => sum + Number(session.durationSeconds || 0), 0);
+  const root = document.createElement("section");
+  root.className = "share-screen";
+
+  const card = document.createElement("article");
+  card.className = "share-card";
+  card.innerHTML = `
+    <div class="share-header">
+      <p>KICKBOXING LOG</p>
+      <strong>${escapeHtml(item.performedDate)}</strong>
+    </div>
+    <div class="share-title-block">
+      <h2>${escapeHtml(item.menuName)}</h2>
+      <p>${escapeHtml(item.status)} / ${timeOnly(item.startedAt)}-${timeOnly(item.endedAt)}</p>
+    </div>
+    <div class="share-total">
+      <span>実施時間</span>
+      <strong>${formatTime(totalSeconds)}</strong>
+    </div>
+  `;
+
+  const list = document.createElement("div");
+  list.className = "share-session-list";
+  sessions.slice(0, 7).forEach((session) => {
+    const row = document.createElement("div");
+    row.className = "share-session-row";
+    row.innerHTML = `
+      <span>${escapeHtml(session.label)}</span>
+      <strong>${escapeHtml(shareSessionText(session))}</strong>
+      <em>${formatTime(session.durationSeconds || 0)}</em>
+    `;
+    list.append(row);
+  });
+  if (sessions.length > 7) {
+    const more = document.createElement("p");
+    more.className = "share-more";
+    more.textContent = `ほか ${sessions.length - 7} 件`;
+    list.append(more);
+  }
+  card.append(list);
+
+  const footer = document.createElement("p");
+  footer.className = "share-footer";
+  footer.textContent = "Kickboxing Training";
+  card.append(footer);
+
+  const actions = document.createElement("div");
+  actions.className = "share-actions";
+  actions.append(actionButton("戻る", "ghost-button small", () => {
+    render("history-detail");
+  }));
+  actions.append(actionButton("履歴へ", "secondary-button small", () => {
+    render("history");
+  }));
+  root.append(card, actions);
+  app.replaceChildren(root);
+}
+
 function startSessionRecord(session) {
   finishCurrentSessionRecord();
   state.sessionLog.push({
@@ -333,6 +405,22 @@ function historySessionBlock(session) {
   meta.textContent = `${timeOnly(session.startedAt)}-${endText} / ${formatTime(session.durationSeconds || 0)}`;
   card.prepend(meta);
   return card;
+}
+
+function shareSessions(item) {
+  if (item.sessions?.length) return item.sessions;
+  const menu = item.snapshot || {};
+  return (menu.rounds || []).map((round, index) => ({
+    label: `Round ${index + 1}`,
+    items: round.items || [],
+    durationSeconds: menu.roundSeconds || 0
+  }));
+}
+
+function shareSessionText(session) {
+  if (session.type === "rest") return "休憩";
+  const items = session.items || [];
+  return items.length ? items.join("、") : "自由練習";
 }
 
 function detailBlock(title, items, memo) {
