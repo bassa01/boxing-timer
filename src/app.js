@@ -201,13 +201,16 @@ function menuCard(menu) {
   card.className = "item-card";
   card.innerHTML = `<h3>${escapeHtml(menu.name)}</h3><p class="item-meta">${summary(menu)}</p>`;
   const actions = document.createElement("div");
-  actions.className = "card-actions";
-  actions.append(actionButton("開始", "primary-button small", () => startMenu(menu)));
-  actions.append(actionButton("編集", "secondary-button small", () => editMenu(menu)));
-  actions.append(actionButton("今日のメニューにする", "secondary-button small", () => {
+  actions.className = "card-actions action-stack";
+  actions.append(actionButton("このメニューで開始", "primary-button small full-width", () => startMenu(menu)));
+  const secondaryActions = document.createElement("div");
+  secondaryActions.className = "secondary-actions";
+  secondaryActions.append(actionButton("編集", "secondary-button small", () => editMenu(menu)));
+  secondaryActions.append(actionButton("今日のメニューにする", "ghost-button small", () => {
     setTodayMenuId(menu.id);
     render("home");
   }));
+  actions.append(secondaryActions);
   card.append(actions);
   return card;
 }
@@ -223,12 +226,12 @@ function historyCard(item) {
     card.append(memo);
   }
   const actions = document.createElement("div");
-  actions.className = "card-actions";
-  actions.append(actionButton("内容を見る", "secondary-button small", () => {
+  actions.className = "card-actions action-stack";
+  actions.append(actionButton("練習内容を見る", "primary-button small full-width", () => {
     state.selectedHistory = item;
     render("history-detail");
   }));
-  actions.append(actionButton("削除", "danger-button small", () => {
+  actions.append(actionButton("この履歴を削除", "danger-button small danger-inline", () => {
     const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
     if (!ok) return;
     deleteTrainingHistory(item.id);
@@ -251,7 +254,7 @@ function renderHistoryDetail() {
   const toolbar = document.createElement("div");
   toolbar.className = "toolbar";
   toolbar.append(actionButton("戻る", "ghost-button small", () => render("history")));
-  toolbar.append(actionButton("削除", "danger-button small", () => {
+  toolbar.append(actionButton("この履歴を削除", "danger-button small", () => {
     const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
     if (!ok) return;
     deleteTrainingHistory(item.id);

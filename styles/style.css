@@ -125,20 +125,20 @@ button {
 }
 
 .run-controls {
-  grid-template-columns: 0.8fr 1.4fr 0.8fr;
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .run-controls .primary-button,
 .run-controls .secondary-button,
 .run-controls .danger-button {
-  min-height: 66px;
+  min-height: 58px;
   font-size: 18px;
 }
 
 .run-controls .run-toggle-button {
-  min-height: 82px;
-  font-size: 21px;
+  min-height: 84px;
+  font-size: 22px;
 }
 
 .primary-button,
@@ -177,6 +177,17 @@ button {
 .small {
   min-height: 50px;
   padding-inline: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.secondary-actions,
+.run-secondary-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .toolbar {
@@ -226,9 +237,20 @@ button {
   flex-wrap: wrap;
 }
 
+.action-stack {
+  display: grid;
+  gap: 10px;
+}
+
 .card-actions button {
   min-height: 50px;
   flex: 1 1 96px;
+}
+
+.danger-inline {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--danger), transparent 35%);
+  color: #ffb4a9;
 }
 
 .form,
@@ -414,6 +436,11 @@ textarea {
   }
 
   .run-controls {
-    grid-template-columns: 0.75fr 1.5fr 0.75fr;
+    grid-template-columns: 1fr;
+  }
+
+  .secondary-actions,
+  .run-secondary-controls {
+    grid-template-columns: 1fr;
   }
 }
