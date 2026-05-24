@@ -1,14 +1,15 @@
 :root {
   color-scheme: dark;
-  --bg: #101110;
-  --surface: #1b1c1b;
-  --surface-2: #252724;
-  --text: #f6f4ee;
-  --muted: #b8b6ad;
-  --accent: #e24c35;
-  --accent-2: #f3b43f;
-  --line: #363832;
-  --danger: #c93434;
+  --bg: var(--wa-color-surface-default, #101110);
+  --surface: var(--wa-color-surface-raised, #1b1c1b);
+  --surface-2: var(--wa-color-surface-lowered, #252724);
+  --text: var(--wa-color-text-normal, #f6f4ee);
+  --muted: var(--wa-color-text-quiet, #b8b6ad);
+  --accent: var(--wa-color-brand-fill-normal, #e24c35);
+  --accent-2: var(--wa-color-warning-fill-normal, #f3b43f);
+  --line: var(--wa-color-surface-border, #363832);
+  --danger: var(--wa-color-danger-fill-normal, #c93434);
+  --button-radius: var(--wa-border-radius-m, 8px);
   font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
 }
 
@@ -147,12 +148,24 @@ button {
 .ghost-button,
 .icon-button {
   min-height: 58px;
-  border-radius: 8px;
+  border-radius: var(--button-radius);
   padding: 0 18px;
   color: var(--text);
   font-weight: 800;
   font-size: 17px;
   touch-action: manipulation;
+  box-shadow: var(--wa-shadow-xs, none);
+  transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+.primary-button:active,
+.secondary-button:active,
+.danger-button:active,
+.ghost-button:active,
+.icon-button:active,
+.tech-chip:active,
+.tab-button:active {
+  transform: scale(0.98);
 }
 
 .primary-button {
