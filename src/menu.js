@@ -1,4 +1,5 @@
 import { getHistory, getMenus, getSettings, getTodayMenuId, saveMenus, setTodayMenuId } from "./storage.js";
+import { DEFAULT_BEGINNER_RESTS, DEFAULT_BEGINNER_ROUNDS } from "./templates.js";
 
 export function uid(prefix) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -38,9 +39,20 @@ export function createMenu(source = {}) {
   syncMenuShape(menu, roundCount);
   if (source.rounds) {
     menu.rounds = menu.rounds.map((round, index) => ({ ...round, ...source.rounds[index], number: index + 1, title: `Round ${index + 1}` }));
+  } else {
+    menu.rounds = menu.rounds.map((round, index) => ({
+      ...round,
+      items: DEFAULT_BEGINNER_ROUNDS[index]?.items || [],
+      memo: DEFAULT_BEGINNER_ROUNDS[index]?.memo || ""
+    }));
   }
   if (source.rests) {
     menu.rests = menu.rests.map((rest, index) => ({ ...rest, ...source.rests[index], afterRound: index + 1 }));
+  } else {
+    menu.rests = menu.rests.map((rest, index) => ({
+      ...rest,
+      items: DEFAULT_BEGINNER_RESTS[index] || []
+    }));
   }
   return menu;
 }

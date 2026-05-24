@@ -13,7 +13,7 @@ import {
   saveSettings,
   setTodayMenuId
 } from "./storage.js";
-import { allDefaultTechniques, TECHNIQUE_TEMPLATES } from "./templates.js";
+import { TECHNIQUE_TEMPLATES } from "./templates.js";
 import { buildSessions, formatTime, TrainingTimer } from "./timer.js";
 
 const app = document.querySelector("#app");
@@ -233,7 +233,6 @@ function renderRecentHistory(container) {
 
 function renderRoundEditor(menu, container) {
   const custom = getCustomTechniques();
-  const techniques = [...new Set([...allDefaultTechniques(), ...custom])];
   menu.rounds.forEach((round, index) => {
     const card = document.createElement("section");
     card.className = "editor-card";
@@ -242,14 +241,11 @@ function renderRoundEditor(menu, container) {
     const memo = inputArea("意識する点", round.memo);
     const free = textInput("自由入力して追加", "");
     const chips = document.createElement("div");
-    chips.className = "tech-grid";
-    techniques.forEach((technique) => {
-      chips.append(actionButton(technique, "tech-chip", () => {
-        const items = splitItems(selected.querySelector("textarea").value);
-        if (!items.includes(technique)) items.push(technique);
-        selected.querySelector("textarea").value = items.join("、");
-      }));
+    chips.className = "tech-category-stack";
+    Object.entries(TECHNIQUE_TEMPLATES).forEach(([category, techniques]) => {
+      chips.append(techniqueCategory(category, techniques, selected));
     });
+    if (custom.length) chips.append(techniqueCategory("ユーザー追加", custom, selected));
     free.querySelector("input").addEventListener("keydown", (event) => {
       if (event.key !== "Enter") return;
       event.preventDefault();
@@ -266,6 +262,25 @@ function renderRoundEditor(menu, container) {
     card.append(selected, memo, chips, free);
     container.append(card);
   });
+}
+
+function techniqueCategory(category, techniques, selected) {
+  const section = document.createElement("div");
+  section.className = "tech-category";
+  const heading = document.createElement("h4");
+  heading.textContent = category;
+  const grid = document.createElement("div");
+  grid.className = "tech-grid";
+  [...new Set(techniques)].forEach((technique) => {
+    grid.append(actionButton(technique, "tech-chip", () => {
+      const textarea = selected.querySelector("textarea");
+      const items = splitItems(textarea.value);
+      if (!items.includes(technique)) items.push(technique);
+      textarea.value = items.join("、");
+    }));
+  });
+  section.append(heading, grid);
+  return section;
 }
 
 function renderRestEditor(menu, container) {
