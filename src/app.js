@@ -22,6 +22,7 @@ const state = {
   view: "home",
   editingMenu: null,
   runningMenu: null,
+  selectedHistory: null,
   timer: null,
   startedAt: null
 };
@@ -53,6 +54,7 @@ function render(view) {
   if (view === "edit") renderEdit();
   if (view === "run") renderRun();
   if (view === "history") renderHistory();
+  if (view === "history-detail") renderHistoryDetail();
   if (view === "settings") renderSettings();
 }
 
@@ -222,6 +224,10 @@ function historyCard(item) {
   }
   const actions = document.createElement("div");
   actions.className = "card-actions";
+  actions.append(actionButton("内容を見る", "secondary-button small", () => {
+    state.selectedHistory = item;
+    render("history-detail");
+  }));
   actions.append(actionButton("削除", "danger-button small", () => {
     const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
     if (!ok) return;
@@ -229,6 +235,64 @@ function historyCard(item) {
     render(state.view);
   }));
   card.append(actions);
+  return card;
+}
+
+function renderHistoryDetail() {
+  const item = state.selectedHistory;
+  if (!item) {
+    render("history");
+    return;
+  }
+  const menu = item.snapshot || {};
+  const root = document.createElement("section");
+  root.className = "view-stack";
+
+  const toolbar = document.createElement("div");
+  toolbar.className = "toolbar";
+  toolbar.append(actionButton("戻る", "ghost-button small", () => render("history")));
+  toolbar.append(actionButton("削除", "danger-button small", () => {
+    const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
+    if (!ok) return;
+    deleteTrainingHistory(item.id);
+    state.selectedHistory = null;
+    render("history");
+  }));
+
+  const header = document.createElement("article");
+  header.className = "item-card";
+  header.innerHTML = `
+    <p class="eyebrow">${escapeHtml(item.performedDate)}</p>
+    <h2 class="history-detail-title">${escapeHtml(item.menuName)}</h2>
+    <p class="item-meta">${escapeHtml(item.status)} / ${item.roundCount}R / ${timeOnly(item.startedAt)}-${timeOnly(item.endedAt)}</p>
+  `;
+  if (item.memo) {
+    const memo = document.createElement("p");
+    memo.className = "muted";
+    memo.textContent = item.memo;
+    header.append(memo);
+  }
+
+  root.append(toolbar, header);
+  (menu.rounds || []).forEach((round, index) => {
+    root.append(detailBlock(`Round ${index + 1}`, round.items || [], round.memo || ""));
+    const rest = menu.rests?.[index];
+    if (rest) root.append(detailBlock(`Rest ${index + 1}`, rest.items || [], ""));
+  });
+  app.replaceChildren(root);
+}
+
+function detailBlock(title, items, memo) {
+  const card = document.createElement("article");
+  card.className = "item-card history-detail-card";
+  const list = items.length ? items : ["記録なし"];
+  card.innerHTML = `<h3>${escapeHtml(title)}</h3><p>${escapeHtml(list.join("、"))}</p>`;
+  if (memo) {
+    const memoText = document.createElement("p");
+    memoText.className = "muted";
+    memoText.textContent = memo;
+    card.append(memoText);
+  }
   return card;
 }
 
