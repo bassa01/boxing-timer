@@ -316,7 +316,7 @@ function renderShareCard() {
     return;
   }
   const sessions = shareSessions(item);
-  const totalSeconds = sessions.reduce((sum, session) => sum + Number(session.durationSeconds || 0), 0);
+  const totalSeconds = elapsedSeconds(item.startedAt, item.endedAt);
   const root = document.createElement("section");
   root.className = "share-screen";
 
@@ -345,7 +345,7 @@ function renderShareCard() {
     row.innerHTML = `
       <span>${escapeHtml(session.label)}</span>
       <strong>${escapeHtml(shareSessionText(session))}</strong>
-      <em>${formatTime(session.durationSeconds || 0)}</em>
+      <em>${formatTime(sessionDurationSeconds(session))}</em>
     `;
     list.append(row);
   });
@@ -396,7 +396,7 @@ function historySessionBlock(session) {
   const meta = document.createElement("p");
   meta.className = "item-meta";
   const endText = session.endedAt ? timeOnly(session.endedAt) : "実施中";
-  meta.textContent = `${timeOnly(session.startedAt)}-${endText} / ${formatTime(session.durationSeconds || 0)}`;
+  meta.textContent = `${timeOnly(session.startedAt)}-${endText} / ${formatTime(sessionDurationSeconds(session))}`;
   card.prepend(meta);
   return card;
 }
@@ -415,6 +415,18 @@ function shareSessionText(session) {
   if (session.type === "rest") return "休憩";
   const items = session.items || [];
   return items.length ? items.join("、") : "自由練習";
+}
+
+function sessionDurationSeconds(session) {
+  if (session.startedAt && session.endedAt) return elapsedSeconds(session.startedAt, session.endedAt);
+  return Number(session.durationSeconds || 0);
+}
+
+function elapsedSeconds(startedAt, endedAt) {
+  const start = new Date(startedAt).getTime();
+  const end = new Date(endedAt).getTime();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return 0;
+  return Math.round((end - start) / 1000);
 }
 
 function detailBlock(title, items, memo) {
