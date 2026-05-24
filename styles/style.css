@@ -505,7 +505,7 @@ textarea {
   padding: 18px;
   display: grid;
   grid-template-rows: auto auto auto 1fr auto;
-  gap: 14px;
+  gap: 12px;
   overflow: hidden;
 }
 
@@ -521,8 +521,7 @@ textarea {
 .share-header p,
 .share-title-block p,
 .share-total span,
-.share-footer,
-.share-more {
+.share-footer {
   margin: 0;
 }
 
@@ -560,14 +559,14 @@ textarea {
 
 .share-session-list {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   align-content: start;
   min-height: 0;
 }
 
 .share-session-row {
   border-bottom: 1px solid var(--line);
-  padding-bottom: 7px;
+  padding-bottom: 5px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 8px;
@@ -595,7 +594,6 @@ textarea {
   font-weight: 800;
 }
 
-.share-more,
 .share-footer {
   color: var(--muted);
   font-size: 12px;

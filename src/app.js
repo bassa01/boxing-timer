@@ -339,7 +339,7 @@ function renderShareCard() {
 
   const list = document.createElement("div");
   list.className = "share-session-list";
-  sessions.slice(0, 7).forEach((session) => {
+  sessions.forEach((session) => {
     const row = document.createElement("div");
     row.className = "share-session-row";
     row.innerHTML = `
@@ -349,12 +349,6 @@ function renderShareCard() {
     `;
     list.append(row);
   });
-  if (sessions.length > 7) {
-    const more = document.createElement("p");
-    more.className = "share-more";
-    more.textContent = `ほか ${sessions.length - 7} 件`;
-    list.append(more);
-  }
   card.append(list);
 
   const footer = document.createElement("p");
