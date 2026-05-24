@@ -483,7 +483,7 @@ function splitItems(value) {
 
 function describeSession(session) {
   const items = session.items?.length ? session.items.join("、") : "自由練習";
-  return session.memo ? `${items}。${session.memo}` : items;
+  return items;
 }
 
 function summary(menu) {
