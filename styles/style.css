@@ -1,14 +1,17 @@
 :root {
-  color-scheme: dark;
-  --bg: #101110;
-  --surface: #1b1c1b;
-  --surface-2: #252724;
-  --text: #f6f4ee;
-  --muted: #b8b6ad;
-  --accent: #e24c35;
-  --accent-2: #f3b43f;
-  --line: #363832;
-  --danger: #c93434;
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #eef8f7;
+  --text: #1e2b2b;
+  --muted: #667574;
+  --accent: #86cecb;
+  --accent-strong: #2f8f8a;
+  --accent-soft: #dff5f4;
+  --accent-2: #2f8f8a;
+  --line: #d9e7e6;
+  --danger: #d94b4b;
+  --danger-soft: #fff1f1;
   --button-radius: 8px;
   font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
 }
@@ -47,6 +50,7 @@ button {
   align-items: center;
   padding: calc(14px + env(safe-area-inset-top)) 18px 12px;
   border-bottom: 1px solid var(--line);
+  background: var(--surface);
 }
 
 .topbar h1,
@@ -169,21 +173,25 @@ button {
 
 .primary-button {
   background: var(--accent);
+  color: #092827;
 }
 
 .secondary-button {
   background: var(--surface-2);
   border: 1px solid var(--line);
+  color: var(--text);
 }
 
 .danger-button {
   background: var(--danger);
+  color: #ffffff;
 }
 
 .ghost-button,
 .icon-button {
   background: transparent;
   border: 1px solid var(--line);
+  color: var(--text);
 }
 
 .small {
@@ -260,9 +268,9 @@ button {
 }
 
 .danger-inline {
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--danger), transparent 35%);
-  color: #ffb4a9;
+  background: var(--danger-soft);
+  border: 1px solid #f0bcbc;
+  color: #a12e2e;
 }
 
 .form,
@@ -281,7 +289,7 @@ label {
 input,
 textarea {
   width: 100%;
-  background: #0d0e0d;
+  background: #ffffff;
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -330,9 +338,9 @@ textarea {
   min-height: 48px;
   padding: 0 14px;
   border-radius: 999px;
-  background: #30322e;
-  color: var(--text);
-  border: 1px solid var(--line);
+  background: var(--accent-soft);
+  color: #164846;
+  border: 1px solid #b8e6e4;
   font-weight: 700;
   font-size: 15px;
   touch-action: manipulation;
@@ -394,7 +402,7 @@ textarea {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-  background: #141514;
+  background: #ffffff;
   border-top: 1px solid var(--line);
 }
 
@@ -409,8 +417,8 @@ textarea {
 }
 
 .tab-button.is-active {
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--accent-soft);
+  color: #164846;
 }
 
 .file-button {

@@ -3,8 +3,8 @@
   "short_name": "Kickboxing",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#101110",
-  "theme_color": "#151515",
+  "background_color": "#ffffff",
+  "theme_color": "#86cecb",
   "lang": "ja",
   "icons": [
     {
