@@ -20,10 +20,18 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  touch-action: pan-y;
 }
 
 button,
@@ -40,8 +48,10 @@ button {
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  width: 100%;
   max-width: 720px;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -78,6 +88,7 @@ button {
 
 .app-main {
   overflow: auto;
+  overflow-x: hidden;
   padding: 18px;
 }
 
