@@ -110,11 +110,19 @@ button {
 .run-controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .run-controls {
   grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.run-controls .primary-button,
+.run-controls .secondary-button,
+.run-controls .danger-button {
+  min-height: 66px;
+  font-size: 18px;
 }
 
 .primary-button,
@@ -122,11 +130,13 @@ button {
 .danger-button,
 .ghost-button,
 .icon-button {
-  min-height: 48px;
+  min-height: 58px;
   border-radius: 8px;
-  padding: 0 14px;
+  padding: 0 18px;
   color: var(--text);
   font-weight: 800;
+  font-size: 17px;
+  touch-action: manipulation;
 }
 
 .primary-button {
@@ -149,7 +159,8 @@ button {
 }
 
 .small {
-  min-height: 40px;
+  min-height: 50px;
+  padding-inline: 16px;
 }
 
 .toolbar {
@@ -183,12 +194,13 @@ button {
 
 .card-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .card-actions button {
-  min-height: 38px;
+  min-height: 50px;
+  flex: 1 1 96px;
 }
 
 .form,
@@ -232,7 +244,7 @@ textarea {
 .tech-grid,
 .tag-list {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -253,13 +265,15 @@ textarea {
 }
 
 .tech-chip {
-  min-height: 34px;
-  padding: 0 10px;
+  min-height: 48px;
+  padding: 0 14px;
   border-radius: 999px;
   background: #30322e;
   color: var(--text);
   border: 1px solid var(--line);
   font-weight: 700;
+  font-size: 15px;
+  touch-action: manipulation;
 }
 
 .run-screen {
@@ -306,18 +320,20 @@ textarea {
 .tabbar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  gap: 10px;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
   background: #141514;
   border-top: 1px solid var(--line);
 }
 
 .tab-button {
-  min-height: 44px;
+  min-height: 56px;
   border-radius: 8px;
   background: transparent;
   color: var(--muted);
   font-weight: 800;
+  font-size: 15px;
+  touch-action: manipulation;
 }
 
 .tab-button.is-active {
