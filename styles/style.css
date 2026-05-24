@@ -22,9 +22,10 @@
 
 html,
 body {
+  height: 100%;
   max-width: 100%;
-  overflow-x: hidden;
-  overscroll-behavior-x: none;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -45,11 +46,13 @@ button {
 }
 
 .app-shell {
-  min-height: 100dvh;
+  height: 100dvh;
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .topbar {
@@ -87,6 +90,8 @@ button {
 .app-main {
   overflow: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 18px 18px calc(100px + env(safe-area-inset-bottom));
 }
 
