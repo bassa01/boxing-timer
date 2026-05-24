@@ -25,7 +25,8 @@ const state = {
   selectedHistory: null,
   sessionLog: [],
   timer: null,
-  startedAt: null
+  startedAt: null,
+  wakeLock: null
 };
 
 initializeStorage();
@@ -36,6 +37,10 @@ render("home");
 
 tabs.forEach((button) => {
   button.addEventListener("click", () => render(button.dataset.view));
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && state.timer?.running) requestWakeLock();
 });
 
 function cloneTemplate(id) {
@@ -50,6 +55,7 @@ function render(view) {
   if (state.timer && view !== "run") {
     state.timer.stop();
     state.timer = null;
+    releaseWakeLock();
   }
   if (view === "home") renderHome();
   if (view === "menus") renderMenus();
@@ -133,6 +139,7 @@ function renderRun() {
     onTick: updateRunView,
     onComplete: () => {
       finishCurrentSessionRecord();
+      releaseWakeLock();
       playCue("end");
       addTrainingHistory(menu, state.startedAt, "完了", "", state.sessionLog);
       alert("練習を完了しました");
@@ -141,6 +148,8 @@ function renderRun() {
   });
   app.querySelector("[data-action='toggle-run']").addEventListener("click", () => {
     state.timer.toggle();
+    if (state.timer.running) requestWakeLock();
+    else releaseWakeLock();
     app.querySelector("[data-action='toggle-run']").textContent = state.timer.running ? "一時停止" : "再開";
   });
   app.querySelector("[data-action='skip-run']").addEventListener("click", () => state.timer.skip());
@@ -148,6 +157,7 @@ function renderRun() {
     if (!confirm("練習を終了しますか？")) return;
     finishCurrentSessionRecord();
     state.timer.stop();
+    releaseWakeLock();
     const memo = prompt("練習メモを残しますか？", "") || "";
     addTrainingHistory(menu, state.startedAt, "途中終了", memo, state.sessionLog);
     render("history");
@@ -615,6 +625,25 @@ function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "ja-JP";
   speechSynthesis.speak(utterance);
+}
+
+async function requestWakeLock() {
+  if (!("wakeLock" in navigator) || state.wakeLock) return;
+  try {
+    state.wakeLock = await navigator.wakeLock.request("screen");
+    state.wakeLock.addEventListener("release", () => {
+      state.wakeLock = null;
+    });
+  } catch {
+    state.wakeLock = null;
+  }
+}
+
+function releaseWakeLock() {
+  if (!state.wakeLock) return;
+  const lock = state.wakeLock;
+  state.wakeLock = null;
+  lock.release().catch(() => {});
 }
 
 function exportJson() {
