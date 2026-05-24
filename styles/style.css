@@ -46,8 +46,6 @@ button {
 
 .app-shell {
   min-height: 100dvh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
@@ -89,7 +87,7 @@ button {
 .app-main {
   overflow: auto;
   overflow-x: hidden;
-  padding: 18px;
+  padding: 18px 18px calc(100px + env(safe-area-inset-bottom));
 }
 
 .is-running-view .topbar,
@@ -441,6 +439,13 @@ textarea {
 }
 
 .tabbar {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  bottom: 0;
+  z-index: 20;
+  width: min(100%, 720px);
+  transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
