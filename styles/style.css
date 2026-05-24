@@ -82,8 +82,9 @@ button {
 }
 
 .is-running-view .app-main {
-  padding-top: calc(14px + env(safe-area-inset-top));
-  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
 .view-stack,
@@ -292,10 +293,12 @@ textarea {
 }
 
 .run-screen {
-  min-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height: 0;
+  height: calc(100dvh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: grid;
-  grid-template-rows: auto auto auto 1fr auto auto;
-  gap: 12px;
+  grid-template-rows: auto auto auto minmax(96px, 150px) minmax(48px, auto) auto;
+  align-content: start;
+  gap: 10px;
 }
 
 .run-state {
@@ -317,7 +320,10 @@ textarea {
 }
 
 .run-content {
-  padding: 16px;
+  min-height: 96px;
+  max-height: 150px;
+  overflow: hidden;
+  padding: 12px;
 }
 
 .run-next {
@@ -326,8 +332,8 @@ textarea {
 
 .run-content h2 {
   margin: 0;
-  font-size: 28px;
-  line-height: 1.25;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.2;
 }
 
 .run-next p:last-child {
@@ -388,11 +394,6 @@ textarea {
 @media (max-width: 380px) {
   .app-main {
     padding: 14px;
-  }
-
-  .is-running-view .app-main {
-    padding-top: calc(14px + env(safe-area-inset-top));
-    padding-bottom: calc(14px + env(safe-area-inset-bottom));
   }
 
   .action-grid,

@@ -1,4 +1,4 @@
-import { addTrainingHistory, groupHistoryByDate } from "./history.js";
+import { addTrainingHistory, deleteTrainingHistory, groupHistoryByDate } from "./history.js";
 import { createMenu, ensureTodayMenu, getTodayMenu, syncMenuShape, upsertMenu } from "./menu.js";
 import { registerServiceWorker, setupInstallButton } from "./pwa.js";
 import {
@@ -220,6 +220,15 @@ function historyCard(item) {
     memo.textContent = item.memo;
     card.append(memo);
   }
+  const actions = document.createElement("div");
+  actions.className = "card-actions";
+  actions.append(actionButton("削除", "danger-button small", () => {
+    const ok = confirm(`${item.performedDate} の「${item.menuName}」の履歴を削除しますか？\nこの操作は元に戻せません。`);
+    if (!ok) return;
+    deleteTrainingHistory(item.id);
+    render(state.view);
+  }));
+  card.append(actions);
   return card;
 }
 

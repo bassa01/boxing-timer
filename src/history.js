@@ -40,3 +40,11 @@ export function groupHistoryByDate(history) {
     return groups;
   }, {});
 }
+
+export function deleteTrainingHistory(historyId) {
+  const history = getHistory();
+  const nextHistory = history.filter((item) => item.id !== historyId);
+  if (nextHistory.length === history.length) return false;
+  saveHistory(nextHistory);
+  return true;
+}
