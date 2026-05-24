@@ -99,7 +99,6 @@ function renderEdit() {
     renderEdit();
   });
   renderRoundEditor(menu, app.querySelector("[data-round-editor]"));
-  renderRestEditor(menu, app.querySelector("[data-rest-editor]"));
   app.querySelector("[data-action='back']").addEventListener("click", () => render("menus"));
   app.querySelector("[data-action='save-menu']").addEventListener("click", () => {
     readMenuForm(menu, form);
@@ -320,7 +319,8 @@ function finishCurrentSessionRecord() {
 }
 
 function historySessionBlock(session) {
-  const card = detailBlock(session.label, session.items || [], session.memo || "");
+  const items = session.type === "rest" && !session.items?.length ? ["休憩"] : (session.items || []);
+  const card = detailBlock(session.label, items, session.memo || "");
   const meta = document.createElement("p");
   meta.className = "item-meta";
   const endText = session.endedAt ? timeOnly(session.endedAt) : "実施中";
@@ -404,18 +404,6 @@ function techniqueCategory(category, techniques, selected) {
   return section;
 }
 
-function renderRestEditor(menu, container) {
-  menu.rests.forEach((rest, index) => {
-    const card = document.createElement("section");
-    card.className = "editor-card";
-    card.innerHTML = `<h3>Rest ${index + 1}</h3>`;
-    const items = inputArea("休憩中の指示", rest.items.join("、"));
-    items.querySelector("textarea").addEventListener("input", () => { rest.items = splitItems(items.querySelector("textarea").value); });
-    card.append(items);
-    container.append(card);
-  });
-}
-
 function readBaseForm(menu, form) {
   menu.name = form.name.value.trim() || "今日のキック練習";
   menu.roundSeconds = Number(form.roundSeconds.value || 180);
@@ -430,10 +418,6 @@ function readMenuForm(menu, form) {
   roundCards.forEach((card, index) => {
     menu.rounds[index].items = splitItems(card.querySelector("textarea").value);
     menu.rounds[index].memo = card.querySelectorAll("textarea")[1].value;
-  });
-  const restCards = [...app.querySelectorAll("[data-rest-editor] .editor-card")];
-  restCards.forEach((card, index) => {
-    menu.rests[index].items = splitItems(card.querySelector("textarea").value);
   });
 }
 
@@ -482,6 +466,7 @@ function splitItems(value) {
 }
 
 function describeSession(session) {
+  if (session.type === "rest") return "休憩";
   const items = session.items?.length ? session.items.join("、") : "自由練習";
   return items;
 }

@@ -9,12 +9,11 @@ export function buildSessions(menu) {
       memo: round.memo
     });
     if (index < menu.rounds.length - 1 && Number(menu.restSeconds) > 0) {
-      const rest = menu.rests[index] || { items: [] };
       sessions.push({
         type: "rest",
         label: `Rest ${index + 1}`,
         seconds: Number(menu.restSeconds),
-        items: rest.items,
+        items: [],
         memo: ""
       });
     }

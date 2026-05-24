@@ -8,26 +8,6 @@ export const TECHNIQUE_TEMPLATES = {
   初級コンビネーション: ["ジャブだけ", "ワンツー", "ワンツー右ロー", "ジャブ右ミドル"]
 };
 
-export const DEFAULT_BEGINNER_ROUNDS = [
-  {
-    items: ["縄跳び", "ラダー", "軽くステップ"],
-    memo: "体を温めて、息が上がりすぎない強度で動く"
-  },
-  {
-    items: ["シャドー", "ジャブ", "ストレート", "ワンツー"],
-    memo: "力まず、打った後にガードを戻す"
-  },
-  {
-    items: ["サンドバッグ", "右ロー", "左ミドル", "ワンツー右ロー"],
-    memo: "フォームを崩さず、1発ずつ丁寧に当てる"
-  }
-];
-
-export const DEFAULT_BEGINNER_RESTS = [
-  ["呼吸を整える", "肩の力を抜く", "次はシャドー"],
-  ["水分", "ガード確認", "次はサンドバッグ"]
-];
-
 export function allDefaultTechniques() {
   return Object.values(TECHNIQUE_TEMPLATES).flat();
 }
