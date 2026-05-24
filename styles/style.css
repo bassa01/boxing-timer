@@ -314,12 +314,37 @@ textarea {
 
 .editor-card {
   padding: 14px;
-  display: grid;
-  gap: 12px;
 }
 
 .editor-card h3 {
   margin: 0;
+}
+
+.editor-card summary {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.round-summary-text {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.round-editor-body {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
 }
 
 .tech-grid,

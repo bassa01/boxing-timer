@@ -99,6 +99,12 @@ function renderEdit() {
     renderEdit();
   });
   renderRoundEditor(menu, app.querySelector("[data-round-editor]"));
+  app.querySelector("[data-action='add-round']").addEventListener("click", () => {
+    readMenuForm(menu, form);
+    syncMenuShape(menu, menu.rounds.length + 1);
+    state.editingMenu = menu;
+    renderEdit();
+  });
   app.querySelector("[data-action='back']").addEventListener("click", () => render("menus"));
   app.querySelector("[data-action='save-menu']").addEventListener("click", () => {
     readMenuForm(menu, form);
@@ -355,9 +361,12 @@ function renderRecentHistory(container) {
 function renderRoundEditor(menu, container) {
   const custom = getCustomTechniques();
   menu.rounds.forEach((round, index) => {
-    const card = document.createElement("section");
+    const card = document.createElement("details");
     card.className = "editor-card";
-    card.innerHTML = `<h3>Round ${index + 1}</h3>`;
+    if (index === 0) card.open = true;
+    card.innerHTML = `<summary><span>Round ${index + 1}</span><span class="round-summary-text">${round.items.length ? escapeHtml(round.items.join("、")) : "未設定"}</span></summary>`;
+    const body = document.createElement("div");
+    body.className = "round-editor-body";
     const selected = inputArea("内容", round.items.join("、"));
     const memo = inputArea("意識する点", round.memo);
     const free = textInput("自由入力して追加", "");
@@ -380,7 +389,8 @@ function renderRoundEditor(menu, container) {
     });
     selected.querySelector("textarea").addEventListener("input", () => { round.items = splitItems(selected.querySelector("textarea").value); });
     memo.querySelector("textarea").addEventListener("input", () => { round.memo = memo.querySelector("textarea").value; });
-    card.append(selected, memo, chips, free);
+    body.append(selected, memo, chips, free);
+    card.append(body);
     container.append(card);
   });
 }
@@ -416,8 +426,9 @@ function readMenuForm(menu, form) {
   syncMenuShape(menu, Number(form.roundCount.value));
   const roundCards = [...app.querySelectorAll("[data-round-editor] .editor-card")];
   roundCards.forEach((card, index) => {
-    menu.rounds[index].items = splitItems(card.querySelector("textarea").value);
-    menu.rounds[index].memo = card.querySelectorAll("textarea")[1].value;
+    const textareas = card.querySelectorAll("textarea");
+    menu.rounds[index].items = splitItems(textareas[0].value);
+    menu.rounds[index].memo = textareas[1].value;
   });
 }
 
