@@ -42,6 +42,7 @@ function cloneTemplate(id) {
 
 function render(view) {
   state.view = view;
+  document.body.classList.toggle("is-running-view", view === "run");
   tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.view === view));
   if (state.timer && view !== "run") {
     state.timer.stop();

@@ -76,6 +76,16 @@ button {
   padding: 18px;
 }
 
+.is-running-view .topbar,
+.is-running-view .tabbar {
+  display: none;
+}
+
+.is-running-view .app-main {
+  padding-top: calc(14px + env(safe-area-inset-top));
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+}
+
 .view-stack,
 .editor-stack {
   display: grid;
@@ -114,7 +124,7 @@ button {
 }
 
 .run-controls {
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 0.8fr 1.4fr 0.8fr;
   gap: 10px;
 }
 
@@ -123,6 +133,11 @@ button {
 .run-controls .danger-button {
   min-height: 66px;
   font-size: 18px;
+}
+
+.run-controls .run-toggle-button {
+  min-height: 82px;
+  font-size: 21px;
 }
 
 .primary-button,
@@ -277,10 +292,10 @@ textarea {
 }
 
 .run-screen {
-  min-height: calc(100dvh - 138px);
+  min-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: grid;
   grid-template-rows: auto auto auto 1fr auto auto;
-  gap: 14px;
+  gap: 12px;
 }
 
 .run-state {
@@ -301,9 +316,12 @@ textarea {
   font-weight: 950;
 }
 
-.run-content,
-.run-next {
+.run-content {
   padding: 16px;
+}
+
+.run-next {
+  padding: 10px 12px;
 }
 
 .run-content h2 {
@@ -315,6 +333,8 @@ textarea {
 .run-next p:last-child {
   margin: 0;
   color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
 }
 
 .tabbar {
@@ -370,12 +390,17 @@ textarea {
     padding: 14px;
   }
 
+  .is-running-view .app-main {
+    padding-top: calc(14px + env(safe-area-inset-top));
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+
   .action-grid,
   .field-grid {
     grid-template-columns: 1fr;
   }
 
   .run-controls {
-    grid-template-columns: 1fr;
+    grid-template-columns: 0.75fr 1.5fr 0.75fr;
   }
 }
