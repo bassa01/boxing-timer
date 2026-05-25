@@ -426,6 +426,26 @@ textarea {
   padding: 12px;
 }
 
+.run-equipment {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 32px;
+  margin: 0 0 8px;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.run-equipment[hidden] {
+  display: none;
+}
+
 .run-next {
   padding: 10px 12px;
 }

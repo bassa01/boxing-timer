@@ -18,6 +18,7 @@ import { buildSessions, formatTime, TrainingTimer } from "./timer.js";
 
 const app = document.querySelector("#app");
 const tabs = [...document.querySelectorAll(".tab-button")];
+const EQUIPMENT_ITEMS = new Set(["床・空きスペース", "床", "縄跳び", "ラダー", "シャドー", "ミット", "サンドバッグ", "ケトルベル", "メディシンボール"]);
 const state = {
   view: "home",
   editingMenu: null,
@@ -561,10 +562,14 @@ function readMenuForm(menu, form) {
 
 function updateRunView(session, next, remaining, eventName) {
   if (!session) return;
+  const current = splitSessionContent(session);
+  const equipment = app.querySelector("[data-run-equipment]");
   app.querySelector("[data-run-state]").textContent = session.type === "round" ? "ラウンド中" : "休憩中";
   app.querySelector("[data-run-number]").textContent = session.label;
   app.querySelector("[data-run-time]").textContent = formatTime(remaining);
-  app.querySelector("[data-run-current]").textContent = describeSession(session);
+  equipment.textContent = current.equipment;
+  equipment.hidden = !current.equipment;
+  app.querySelector("[data-run-current]").textContent = current.content;
   app.querySelector("[data-run-next]").textContent = next ? `${next.label}: ${describeSession(next)}` : "終了";
   if (eventName === "warning") playCue("warning");
 }
@@ -607,6 +612,16 @@ function describeSession(session) {
   if (session.type === "rest") return "休憩";
   const items = session.items?.length ? session.items.join("、") : "自由練習";
   return items;
+}
+
+function splitSessionContent(session) {
+  if (session.type === "rest") return { equipment: "", content: "休憩" };
+  const items = session.items?.length ? session.items : ["自由練習"];
+  const [first, ...rest] = items;
+  if (rest.length && EQUIPMENT_ITEMS.has(first)) {
+    return { equipment: first, content: rest.join("、") };
+  }
+  return { equipment: "", content: items.join("、") };
 }
 
 function sessionSpeechText(session) {
