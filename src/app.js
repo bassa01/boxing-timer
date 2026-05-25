@@ -611,13 +611,13 @@ function playCue(type) {
   const gain = context.createGain();
   const frequencies = { round: 660, rest: 420, warning: 880, end: 220 };
   oscillator.frequency.value = frequencies[type] || 520;
-  oscillator.type = "sine";
+  oscillator.type = "triangle";
   gain.gain.setValueAtTime(0.0001, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.18, context.currentTime + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.22);
+  gain.gain.exponentialRampToValueAtTime(0.38, context.currentTime + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.32);
   oscillator.connect(gain).connect(context.destination);
   oscillator.start();
-  oscillator.stop(context.currentTime + 0.24);
+  oscillator.stop(context.currentTime + 0.34);
 }
 
 function speak(text) {
