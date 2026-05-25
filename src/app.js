@@ -610,9 +610,9 @@ function describeSession(session) {
 }
 
 function sessionSpeechText(session) {
-  if (session.type === "rest") return "休憩";
+  if (session.type === "rest") return "Rest";
   const number = Number(session.label.replace("Round ", ""));
-  return `第${japaneseNumber(number)}ラウンド`;
+  return `Round ${englishNumber(number)}`;
 }
 
 function summary(menu) {
@@ -650,47 +650,47 @@ function playCue(type) {
 async function speak(text) {
   const settings = getSettings();
   if (!settings.speechEnabled || !("speechSynthesis" in window)) return;
-  const voice = await waitForJapaneseVoice();
-  if (!voice) return;
+  const voice = await waitForEnglishVoice();
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "ja-JP";
-  utterance.voice = voice;
-  utterance.rate = 0.95;
+  utterance.lang = "en-US";
+  if (voice) utterance.voice = voice;
+  utterance.rate = 0.92;
   speechSynthesis.speak(utterance);
 }
 
-function findJapaneseVoice() {
+function findEnglishVoice() {
   const voices = speechSynthesis.getVoices();
   return voices
     .filter((voice) => {
       const lang = String(voice.lang || "").toLowerCase();
       const name = String(voice.name || "").toLowerCase();
-      return lang === "ja-jp" ||
-        lang.startsWith("ja") ||
-        name.includes("japanese") ||
-        name.includes("japan") ||
-        name.includes("日本") ||
-        name.includes("kyoko") ||
-        name.includes("otoya");
+      return lang === "en-us" ||
+        lang === "en-gb" ||
+        lang.startsWith("en") ||
+        name.includes("english") ||
+        name.includes("samantha") ||
+        name.includes("daniel") ||
+        name.includes("alex");
     })
-    .sort((a, b) => japaneseVoiceScore(b) - japaneseVoiceScore(a))[0] || null;
+    .sort((a, b) => englishVoiceScore(b) - englishVoiceScore(a))[0] || null;
 }
 
-function japaneseVoiceScore(voice) {
+function englishVoiceScore(voice) {
   const lang = String(voice.lang || "").toLowerCase();
   const name = String(voice.name || "").toLowerCase();
   let score = 0;
-  if (lang === "ja-jp") score += 100;
-  if (lang.startsWith("ja")) score += 60;
-  if (name.includes("japanese") || name.includes("japan") || name.includes("日本")) score += 30;
-  if (name.includes("kyoko") || name.includes("otoya")) score += 20;
+  if (lang === "en-us") score += 100;
+  if (lang === "en-gb") score += 90;
+  if (lang.startsWith("en")) score += 60;
+  if (name.includes("english")) score += 30;
+  if (name.includes("samantha") || name.includes("daniel") || name.includes("alex")) score += 20;
   if (voice.localService) score += 5;
   return score;
 }
 
-function waitForJapaneseVoice() {
-  const voice = findJapaneseVoice();
+function waitForEnglishVoice() {
+  const voice = findEnglishVoice();
   if (voice) return Promise.resolve(voice);
   return new Promise((resolve) => {
     let settled = false;
@@ -700,19 +700,22 @@ function waitForJapaneseVoice() {
       speechSynthesis.removeEventListener?.("voiceschanged", onVoicesChanged);
       resolve(nextVoice);
     };
-    const onVoicesChanged = () => finish(findJapaneseVoice());
+    const onVoicesChanged = () => finish(findEnglishVoice());
     speechSynthesis.addEventListener?.("voiceschanged", onVoicesChanged);
-    window.setTimeout(() => finish(findJapaneseVoice()), 700);
+    window.setTimeout(() => finish(findEnglishVoice()), 700);
   });
 }
 
-function japaneseNumber(number) {
-  const numbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
-  if (number <= 10) return numbers[number];
-  if (number < 20) return `十${numbers[number - 10]}`;
-  const tens = Math.floor(number / 10);
-  const ones = number % 10;
-  return `${numbers[tens]}十${ones ? numbers[ones] : ""}`;
+function englishNumber(number) {
+  const words = [
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+    "seventeen", "eighteen", "nineteen", "twenty"
+  ];
+  if (number <= 20) return words[number];
+  if (number < 30) return `twenty ${words[number - 20]}`;
+  if (number === 30) return "thirty";
+  return String(number);
 }
 
 async function requestWakeLock() {
