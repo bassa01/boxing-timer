@@ -43,6 +43,13 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && state.timer?.running) requestWakeLock();
 });
 
+if ("speechSynthesis" in window) {
+  speechSynthesis.getVoices();
+  speechSynthesis.addEventListener?.("voiceschanged", () => {
+    speechSynthesis.getVoices();
+  });
+}
+
 function cloneTemplate(id) {
   return document.querySelector(`#${id}`).content.cloneNode(true);
 }
@@ -150,7 +157,7 @@ function renderRun() {
     onSession: (session) => {
       startSessionRecord(session);
       playCue(session.type);
-      speak(`${session.label} ${describeSession(session)}`);
+      speak(sessionSpeechText(session));
     },
     onTick: updateRunView,
     onComplete: () => {
@@ -602,6 +609,12 @@ function describeSession(session) {
   return items;
 }
 
+function sessionSpeechText(session) {
+  if (session.type === "rest") return "休憩";
+  const number = Number(session.label.replace("Round ", ""));
+  return `第${japaneseNumber(number)}ラウンド`;
+}
+
 function summary(menu) {
   return `${menu.rounds.length}R / ${formatTime(menu.roundSeconds)} / 休憩${formatTime(menu.restSeconds)} / 実施${menu.performedCount || 0}回`;
 }
@@ -634,13 +647,72 @@ function playCue(type) {
   oscillator.stop(context.currentTime + 0.34);
 }
 
-function speak(text) {
+async function speak(text) {
   const settings = getSettings();
   if (!settings.speechEnabled || !("speechSynthesis" in window)) return;
+  const voice = await waitForJapaneseVoice();
+  if (!voice) return;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "ja-JP";
+  utterance.voice = voice;
+  utterance.rate = 0.95;
   speechSynthesis.speak(utterance);
+}
+
+function findJapaneseVoice() {
+  const voices = speechSynthesis.getVoices();
+  return voices
+    .filter((voice) => {
+      const lang = String(voice.lang || "").toLowerCase();
+      const name = String(voice.name || "").toLowerCase();
+      return lang === "ja-jp" ||
+        lang.startsWith("ja") ||
+        name.includes("japanese") ||
+        name.includes("japan") ||
+        name.includes("日本") ||
+        name.includes("kyoko") ||
+        name.includes("otoya");
+    })
+    .sort((a, b) => japaneseVoiceScore(b) - japaneseVoiceScore(a))[0] || null;
+}
+
+function japaneseVoiceScore(voice) {
+  const lang = String(voice.lang || "").toLowerCase();
+  const name = String(voice.name || "").toLowerCase();
+  let score = 0;
+  if (lang === "ja-jp") score += 100;
+  if (lang.startsWith("ja")) score += 60;
+  if (name.includes("japanese") || name.includes("japan") || name.includes("日本")) score += 30;
+  if (name.includes("kyoko") || name.includes("otoya")) score += 20;
+  if (voice.localService) score += 5;
+  return score;
+}
+
+function waitForJapaneseVoice() {
+  const voice = findJapaneseVoice();
+  if (voice) return Promise.resolve(voice);
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (nextVoice) => {
+      if (settled) return;
+      settled = true;
+      speechSynthesis.removeEventListener?.("voiceschanged", onVoicesChanged);
+      resolve(nextVoice);
+    };
+    const onVoicesChanged = () => finish(findJapaneseVoice());
+    speechSynthesis.addEventListener?.("voiceschanged", onVoicesChanged);
+    window.setTimeout(() => finish(findJapaneseVoice()), 700);
+  });
+}
+
+function japaneseNumber(number) {
+  const numbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+  if (number <= 10) return numbers[number];
+  if (number < 20) return `十${numbers[number - 10]}`;
+  const tens = Math.floor(number / 10);
+  const ones = number % 10;
+  return `${numbers[tens]}十${ones ? numbers[ones] : ""}`;
 }
 
 async function requestWakeLock() {
