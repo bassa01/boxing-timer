@@ -436,7 +436,7 @@ function historySessionBlock(session) {
 }
 
 function shareSessions(item) {
-  if (item.sessions?.length) return item.sessions;
+  if (item.sessions?.length) return item.sessions.filter((session) => session.type !== "rest");
   const menu = item.snapshot || {};
   return (menu.rounds || []).map((round, index) => ({
     label: `Round ${index + 1}`,
