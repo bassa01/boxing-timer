@@ -76,21 +76,35 @@ function renderHome() {
   app.querySelector("[data-action='start-today']").addEventListener("click", () => startMenu(today));
   app.querySelector("[data-action='new-menu']").addEventListener("click", () => editMenu(createMenu()));
   app.querySelector("[data-action='edit-today']").addEventListener("click", () => editMenu(today || createMenu()));
-  app.querySelector("[data-action='preset-two-hour']").addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
   renderRecentHistory(app.querySelector("[data-recent-history]"));
 }
 
 function renderMenus() {
   app.replaceChildren(cloneTemplate("menusView"));
   app.querySelector("[data-action='new-menu']").addEventListener("click", () => editMenu(createMenu()));
-  app.querySelector("[data-action='preset-two-hour']").addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
+  const presetButton = app.querySelector("[data-action='preset-two-hour']");
   const list = app.querySelector("[data-menu-list]");
   const menus = getMenus();
+  if (hasPresetMenu(menus, SOUTHPAW_TWO_HOUR_PRESET.presetId)) {
+    presetButton.remove();
+  } else {
+    presetButton.addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
+  }
   if (!menus.length) {
     list.append(emptyCard("メニューがありません"));
     return;
   }
   menus.forEach((menu) => list.append(menuCard(menu)));
+}
+
+function hasPresetMenu(menus, presetId) {
+  return menus.some((menu) => {
+    return menu.presetId === presetId ||
+      (menu.name === SOUTHPAW_TWO_HOUR_PRESET.name &&
+        menu.rounds?.length === SOUTHPAW_TWO_HOUR_PRESET.roundCount &&
+        Number(menu.roundSeconds) === SOUTHPAW_TWO_HOUR_PRESET.roundSeconds &&
+        Number(menu.restSeconds) === SOUTHPAW_TWO_HOUR_PRESET.restSeconds);
+  });
 }
 
 function renderEdit() {

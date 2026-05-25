@@ -27,6 +27,7 @@ export function createMenu(source = {}) {
     menuDate: source.menuDate || localDate(),
     roundSeconds: Number(source.roundSeconds || settings.defaultRoundSeconds),
     restSeconds: Number(source.restSeconds ?? settings.defaultRestSeconds),
+    presetId: source.presetId || null,
     rounds: [],
     rests: [],
     memo: source.memo || "",

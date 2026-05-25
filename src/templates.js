@@ -10,6 +10,7 @@ export const TECHNIQUE_TEMPLATES = {
 };
 
 export const SOUTHPAW_TWO_HOUR_PRESET = {
+  presetId: "southpaw_two_hour_v1",
   name: "サウスポー2時間メニュー",
   roundCount: 30,
   roundSeconds: 210,
