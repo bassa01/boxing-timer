@@ -13,7 +13,7 @@ import {
   saveSettings,
   setTodayMenuId
 } from "./storage.js";
-import { TECHNIQUE_TEMPLATES } from "./templates.js";
+import { SOUTHPAW_TWO_HOUR_PRESET, TECHNIQUE_TEMPLATES } from "./templates.js";
 import { buildSessions, formatTime, TrainingTimer } from "./timer.js";
 
 const app = document.querySelector("#app");
@@ -76,12 +76,14 @@ function renderHome() {
   app.querySelector("[data-action='start-today']").addEventListener("click", () => startMenu(today));
   app.querySelector("[data-action='new-menu']").addEventListener("click", () => editMenu(createMenu()));
   app.querySelector("[data-action='edit-today']").addEventListener("click", () => editMenu(today || createMenu()));
+  app.querySelector("[data-action='preset-two-hour']").addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
   renderRecentHistory(app.querySelector("[data-recent-history]"));
 }
 
 function renderMenus() {
   app.replaceChildren(cloneTemplate("menusView"));
   app.querySelector("[data-action='new-menu']").addEventListener("click", () => editMenu(createMenu()));
+  app.querySelector("[data-action='preset-two-hour']").addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
   const list = app.querySelector("[data-menu-list]");
   const menus = getMenus();
   if (!menus.length) {

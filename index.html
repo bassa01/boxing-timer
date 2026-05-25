@@ -43,6 +43,7 @@
           <button class="secondary-button" data-action="edit-today">内容を編集</button>
           <button class="ghost-button" data-action="new-menu">新しいメニューを作る</button>
         </div>
+        <button class="secondary-button full-width" data-action="preset-two-hour">2時間プリセットを作る</button>
         <section>
           <h2 class="section-title">最近の履歴</h2>
           <div class="list" data-recent-history></div>
@@ -56,6 +57,7 @@
           <h2 class="section-title">メニュー一覧</h2>
           <button class="secondary-button small" data-action="new-menu">追加</button>
         </div>
+        <button class="secondary-button full-width" data-action="preset-two-hour">2時間プリセットを作る</button>
         <div class="list" data-menu-list></div>
       </section>
     </template>
@@ -74,7 +76,7 @@
           <div class="field-grid">
             <label>
               <span>ラウンド数</span>
-              <input name="roundCount" type="number" min="1" max="12" inputmode="numeric">
+              <input name="roundCount" type="number" min="1" max="60" inputmode="numeric">
             </label>
             <label>
               <span>ラウンド秒</span>
