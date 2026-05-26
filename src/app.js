@@ -662,13 +662,14 @@ function playCue(type) {
   oscillator.stop(context.currentTime + 0.34);
 }
 
-async function speak(text) {
+function speak(text) {
   const settings = getSettings();
   if (!settings.speechEnabled || !("speechSynthesis" in window)) return;
-  const voice = await waitForEnglishVoice();
   speechSynthesis.cancel();
+  speechSynthesis.resume?.();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "en-US";
+  const voice = findEnglishVoice();
   if (voice) utterance.voice = voice;
   utterance.rate = 0.92;
   speechSynthesis.speak(utterance);
@@ -702,23 +703,6 @@ function englishVoiceScore(voice) {
   if (name.includes("samantha") || name.includes("daniel") || name.includes("alex")) score += 20;
   if (voice.localService) score += 5;
   return score;
-}
-
-function waitForEnglishVoice() {
-  const voice = findEnglishVoice();
-  if (voice) return Promise.resolve(voice);
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = (nextVoice) => {
-      if (settled) return;
-      settled = true;
-      speechSynthesis.removeEventListener?.("voiceschanged", onVoicesChanged);
-      resolve(nextVoice);
-    };
-    const onVoicesChanged = () => finish(findEnglishVoice());
-    speechSynthesis.addEventListener?.("voiceschanged", onVoicesChanged);
-    window.setTimeout(() => finish(findEnglishVoice()), 700);
-  });
 }
 
 function englishNumber(number) {
