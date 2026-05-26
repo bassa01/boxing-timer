@@ -1,5 +1,5 @@
 import { addTrainingHistory, deleteTrainingHistory, groupHistoryByDate } from "./history.js";
-import { createMenu, ensureTodayMenu, getTodayMenu, syncMenuShape, upsertMenu } from "./menu.js";
+import { createMenu, deleteMenu, ensureTodayMenu, getTodayMenu, syncMenuShape, upsertMenu } from "./menu.js";
 import { registerServiceWorker, setupInstallButton } from "./pwa.js";
 import {
   exportData,
@@ -260,6 +260,12 @@ function menuCard(menu) {
   secondaryActions.append(actionButton("今日のメニューにする", "ghost-button small", () => {
     setTodayMenuId(menu.id);
     render("home");
+  }));
+  secondaryActions.append(actionButton("削除", "danger-button small", () => {
+    const ok = confirm(`「${menu.name}」を削除しますか？\nこの操作は元に戻せません。履歴は削除されません。`);
+    if (!ok) return;
+    deleteMenu(menu.id);
+    render("menus");
   }));
   actions.append(secondaryActions);
   card.append(actions);

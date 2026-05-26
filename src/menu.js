@@ -79,6 +79,12 @@ export function upsertMenu(menu) {
   return saved;
 }
 
+export function deleteMenu(id) {
+  const menus = getMenus();
+  saveMenus(menus.filter((menu) => menu.id !== id));
+  if (getTodayMenuId() === id) setTodayMenuId(null);
+}
+
 export function getTodayMenu() {
   const menus = getMenus();
   const today = localDate();

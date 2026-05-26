@@ -77,6 +77,7 @@ export function getTodayMenuId() {
 
 export function setTodayMenuId(id) {
   if (id) localStorage.setItem(STORAGE_KEYS.todayMenu, id);
+  else localStorage.removeItem(STORAGE_KEYS.todayMenu);
 }
 
 export function exportData() {
