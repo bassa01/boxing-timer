@@ -655,7 +655,7 @@ function playCue(type) {
   oscillator.frequency.value = frequencies[type] || 520;
   oscillator.type = "triangle";
   gain.gain.setValueAtTime(0.0001, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.38, context.currentTime + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.76, context.currentTime + 0.025);
   gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.32);
   oscillator.connect(gain).connect(context.destination);
   oscillator.start();
@@ -671,6 +671,7 @@ function speak(text) {
   utterance.lang = "en-US";
   const voice = findEnglishVoice();
   if (voice) utterance.voice = voice;
+  utterance.volume = 1;
   utterance.rate = 0.92;
   speechSynthesis.speak(utterance);
 }
