@@ -654,17 +654,46 @@ function escapeHtml(value) {
 function playCue(type) {
   if (!getSettings().soundEnabled) return;
   const context = new AudioContext();
+  const patterns = {
+    round: [
+      { frequency: 220, start: 0, duration: 0.11 },
+      { frequency: 330, start: 0.1, duration: 0.11 },
+      { frequency: 440, start: 0.2, duration: 0.16 },
+      { frequency: 660, start: 0.34, duration: 0.2 }
+    ],
+    rest: [
+      { frequency: 523.25, start: 0, duration: 0.13 },
+      { frequency: 392, start: 0.13, duration: 0.13 },
+      { frequency: 261.63, start: 0.26, duration: 0.22 }
+    ],
+    warning: [
+      { frequency: 880, start: 0, duration: 0.08 },
+      { frequency: 880, start: 0.14, duration: 0.08 },
+      { frequency: 1046.5, start: 0.28, duration: 0.1 }
+    ],
+    end: [
+      { frequency: 261.63, start: 0, duration: 0.12 },
+      { frequency: 329.63, start: 0.1, duration: 0.12 },
+      { frequency: 392, start: 0.2, duration: 0.12 },
+      { frequency: 523.25, start: 0.34, duration: 0.34 }
+    ]
+  };
+  (patterns[type] || patterns.round).forEach((note) => playNote(context, note));
+}
+
+function playNote(context, note) {
   const oscillator = context.createOscillator();
   const gain = context.createGain();
-  const frequencies = { round: 660, rest: 420, warning: 880, end: 220 };
-  oscillator.frequency.value = frequencies[type] || 520;
-  oscillator.type = "triangle";
-  gain.gain.setValueAtTime(0.0001, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.76, context.currentTime + 0.025);
-  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.32);
+  const start = context.currentTime + note.start;
+  const end = start + note.duration;
+  oscillator.frequency.setValueAtTime(note.frequency, start);
+  oscillator.type = "sawtooth";
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(0.92, start + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, end);
   oscillator.connect(gain).connect(context.destination);
-  oscillator.start();
-  oscillator.stop(context.currentTime + 0.34);
+  oscillator.start(start);
+  oscillator.stop(end + 0.02);
 }
 
 async function speak(text) {
