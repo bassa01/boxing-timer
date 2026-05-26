@@ -54,7 +54,8 @@ export function syncMenuShape(menu, roundCount) {
       number: index + 1,
       title: `Round ${index + 1}`,
       items: Array.isArray(existing.items) ? existing.items : [],
-      memo: existing.memo || ""
+      memo: existing.memo || "",
+      seconds: existing.seconds
     };
   });
   menu.rests = Array.from({ length: Math.max(0, count - 1) }, (_, index) => {

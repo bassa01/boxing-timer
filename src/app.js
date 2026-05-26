@@ -13,7 +13,7 @@ import {
   saveSettings,
   setTodayMenuId
 } from "./storage.js";
-import { SOUTHPAW_TWO_HOUR_PRESET, TECHNIQUE_TEMPLATES } from "./templates.js";
+import { CHASE_SET_PRESET, SOUTHPAW_TWO_HOUR_PRESET, TECHNIQUE_TEMPLATES } from "./templates.js";
 import { buildSessions, formatTime, TrainingTimer } from "./timer.js";
 
 const app = document.querySelector("#app");
@@ -90,14 +90,10 @@ function renderHome() {
 function renderMenus() {
   app.replaceChildren(cloneTemplate("menusView"));
   app.querySelector("[data-action='new-menu']").addEventListener("click", () => editMenu(createMenu()));
-  const presetButton = app.querySelector("[data-action='preset-two-hour']");
   const list = app.querySelector("[data-menu-list]");
   const menus = getMenus();
-  if (hasPresetMenu(menus, SOUTHPAW_TWO_HOUR_PRESET.presetId)) {
-    presetButton.remove();
-  } else {
-    presetButton.addEventListener("click", () => editMenu(createMenu(SOUTHPAW_TWO_HOUR_PRESET)));
-  }
+  setupPresetButton("[data-action='preset-two-hour']", SOUTHPAW_TWO_HOUR_PRESET, menus);
+  setupPresetButton("[data-action='preset-chase']", CHASE_SET_PRESET, menus);
   if (!menus.length) {
     list.append(emptyCard("メニューがありません"));
     return;
@@ -105,13 +101,22 @@ function renderMenus() {
   menus.forEach((menu) => list.append(menuCard(menu)));
 }
 
-function hasPresetMenu(menus, presetId) {
+function setupPresetButton(selector, preset, menus) {
+  const button = app.querySelector(selector);
+  if (hasPresetMenu(menus, preset)) {
+    button.remove();
+    return;
+  }
+  button.addEventListener("click", () => editMenu(createMenu(preset)));
+}
+
+function hasPresetMenu(menus, preset) {
   return menus.some((menu) => {
-    return menu.presetId === presetId ||
-      (menu.name === SOUTHPAW_TWO_HOUR_PRESET.name &&
-        menu.rounds?.length === SOUTHPAW_TWO_HOUR_PRESET.roundCount &&
-        Number(menu.roundSeconds) === SOUTHPAW_TWO_HOUR_PRESET.roundSeconds &&
-        Number(menu.restSeconds) === SOUTHPAW_TWO_HOUR_PRESET.restSeconds);
+    return menu.presetId === preset.presetId ||
+      (menu.name === preset.name &&
+        menu.rounds?.length === preset.roundCount &&
+        Number(menu.roundSeconds) === preset.roundSeconds &&
+        Number(menu.restSeconds) === preset.restSeconds);
   });
 }
 
@@ -441,7 +446,7 @@ function shareSessions(item) {
   return (menu.rounds || []).map((round, index) => ({
     label: `Round ${index + 1}`,
     items: round.items || [],
-    durationSeconds: menu.roundSeconds || 0
+    durationSeconds: round.seconds || menu.roundSeconds || 0
   }));
 }
 

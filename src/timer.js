@@ -4,7 +4,7 @@ export function buildSessions(menu) {
     sessions.push({
       type: "round",
       label: `Round ${index + 1}`,
-      seconds: Number(menu.roundSeconds),
+      seconds: Number(round.seconds || menu.roundSeconds),
       items: round.items,
       memo: round.memo
     });

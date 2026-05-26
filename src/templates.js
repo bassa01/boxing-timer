@@ -50,6 +50,24 @@ export const SOUTHPAW_TWO_HOUR_PRESET = {
   ]
 };
 
+export const CHASE_SET_PRESET = {
+  presetId: "chase_set_v1",
+  name: "レッスン後25分 追い込みセット",
+  roundCount: 7,
+  roundSeconds: 210,
+  restSeconds: 30,
+  memo: "3分30秒 x 6R、休憩30秒、最後1分。バッグ、スイング、バッグ、スイング、バッグ、バーピー。",
+  rounds: [
+    { items: ["サンドバッグ", "右ジャブ", "左ミドルを反復"], memo: "65〜70%。" },
+    { items: ["ケトルベル", "スイング10回", "立って呼吸を反復"], memo: "" },
+    { items: ["サンドバッグ", "右ジャブ", "左ストレート", "左ミドルを反復"], memo: "70〜75%。" },
+    { items: ["ケトルベル", "スイング10回", "立って呼吸を反復"], memo: "" },
+    { items: ["サンドバッグ", "左ミドル5本", "右ジャブ左ミドル5回を反復"], memo: "75〜85%。5本ごとに一度構え直す。" },
+    { items: ["床", "20秒バーピー", "20秒立って呼吸"], memo: "最後の30秒は立って呼吸。" },
+    { seconds: 60, items: ["床", "歩いて呼吸を整える"], memo: "最後1分。" }
+  ]
+};
+
 export function allDefaultTechniques() {
   return Object.values(TECHNIQUE_TEMPLATES).flat();
 }
