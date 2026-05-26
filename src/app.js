@@ -668,40 +668,37 @@ function speak(text) {
   speechSynthesis.cancel();
   speechSynthesis.resume?.();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  const voice = findEnglishVoice();
+  utterance.lang = "ja-JP";
+  const voice = findJapaneseVoice();
   if (voice) utterance.voice = voice;
   utterance.volume = 1;
   utterance.rate = 0.92;
   speechSynthesis.speak(utterance);
 }
 
-function findEnglishVoice() {
+function findJapaneseVoice() {
   const voices = speechSynthesis.getVoices();
   return voices
     .filter((voice) => {
       const lang = String(voice.lang || "").toLowerCase();
       const name = String(voice.name || "").toLowerCase();
-      return lang === "en-us" ||
-        lang === "en-gb" ||
-        lang.startsWith("en") ||
-        name.includes("english") ||
-        name.includes("samantha") ||
-        name.includes("daniel") ||
-        name.includes("alex");
+      return lang === "ja-jp" ||
+        lang.startsWith("ja") ||
+        name.includes("japanese") ||
+        name.includes("kyoko") ||
+        name.includes("otoya");
     })
-    .sort((a, b) => englishVoiceScore(b) - englishVoiceScore(a))[0] || null;
+    .sort((a, b) => japaneseVoiceScore(b) - japaneseVoiceScore(a))[0] || null;
 }
 
-function englishVoiceScore(voice) {
+function japaneseVoiceScore(voice) {
   const lang = String(voice.lang || "").toLowerCase();
   const name = String(voice.name || "").toLowerCase();
   let score = 0;
-  if (lang === "en-us") score += 100;
-  if (lang === "en-gb") score += 90;
-  if (lang.startsWith("en")) score += 60;
-  if (name.includes("english")) score += 30;
-  if (name.includes("samantha") || name.includes("daniel") || name.includes("alex")) score += 20;
+  if (lang === "ja-jp") score += 100;
+  if (lang.startsWith("ja")) score += 80;
+  if (name.includes("japanese")) score += 30;
+  if (name.includes("kyoko") || name.includes("otoya")) score += 20;
   if (voice.localService) score += 5;
   return score;
 }
